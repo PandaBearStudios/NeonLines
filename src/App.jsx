@@ -14,7 +14,9 @@ function App() {
     <>
       <h1>Neon Lines</h1>
       <section>
-        
+        <section className="innerGlow">
+          
+        </section>
       </section>
     </>
   )
