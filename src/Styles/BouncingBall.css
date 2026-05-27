@@ -1,0 +1,17 @@
+
+.gravity-ball {
+  position: fixed;
+
+  width: 60px;
+  height: 60px;
+
+  border-radius: 50%;
+
+  background: radial-gradient(circle at 30% 30%, #ff8a8a, #ff3b3b);
+
+  box-shadow:
+    0 0 30px rgba(255, 80, 80, 0.733),
+    inset -10px -10px 20px rgba(0, 0, 0, 0.2);
+
+  will-change: transform;
+}
