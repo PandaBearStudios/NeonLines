@@ -1,11 +1,30 @@
+@font-face {
+  font-family: 'NeonFont';
+  src: url('./assets/Fonts/neon-font/Neon-e2wg.ttf') format('truetype');
+}
+
+
 body {
   --inner-color: #501d5a;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   height: 100vh;
   background: radial-gradient(circle, var(--inner-color) 20%, #1a0420);
+}
+
+h1 {
+  font-family: 'NeonFont', sans-serif;
+  font-size: 4rem;
+
+  background: linear-gradient(45deg, #ff6ec4, #7873f5, red);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke: 2px transparent;
+  text-shadow: 0 0 5px #ff6ec4, 0 0 10px #7873f5, 0 0 15px red;
 }
 
 section{

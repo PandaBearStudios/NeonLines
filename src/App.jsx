@@ -12,8 +12,9 @@ function App() {
   
   return (
     <>
+      <h1>Neon Lines</h1>
       <section>
-        <BouncingBall />
+        
       </section>
     </>
   )
