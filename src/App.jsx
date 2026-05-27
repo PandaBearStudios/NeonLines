@@ -15,7 +15,9 @@ function App() {
       <h1>Neon Lines</h1>
       <section>
         <section className="innerGlow">
-          
+          <input type="text" className='nameInput' placeholder="Enter your name" />
+          <button>Play</button>
+          <button>Settings</button>
         </section>
       </section>
     </>

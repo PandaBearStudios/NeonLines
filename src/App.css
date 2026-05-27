@@ -6,6 +6,7 @@
 
 body {
   --inner-color: #501d5a;
+  --pink-glow: #ff6ec4; 
 
   display: flex;
   justify-content: center;
@@ -18,30 +19,81 @@ body {
 h1 {
   font-family: 'NeonFont', sans-serif;
   font-size: 4rem;
+  
 
-  background: linear-gradient(45deg, #ff6ec4, #7873f5, red);
+
+  background: linear-gradient(45deg, var(--pink-glow), #7873f5, red);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: white;
   -webkit-text-stroke: 2px transparent;
-  text-shadow: 0 0 5px #ff6ec4, 0 0 10px #7873f5, 0 0 15px red;
+  text-shadow: 0 0 5px var(--pink-glow), 0 0 10px #7873f5, 0 0 15px red;
   
 }
 
 section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 400px;
   height: 400px;
   background: var(--inner-color);
   border-radius: 50%;
-  border: 2px solid #ff6ec4;
-  box-shadow: 0 0 50px #ff6ec4;
+  border: 2px solid var(--pink-glow);
+  box-shadow: 0 0 50px var(--pink-glow);
 }
 
 
 section .innerGlow {
+  display: flex;
+  flex-direction: column;
+  justify-content:center;
+  align-items: center;
+  gap: 20px;
+
   width: 400px;
   height: 400px;
-  background: var(--inner-color);
+  background: transparent;
   border-radius: 50%;
-  box-shadow: 0 0 50px #ff6ec4 inset;
+  box-shadow: 0 0 50px var(--pink-glow) inset;
+}
+
+.nameInput{
+  margin-top: 20px;
+  padding: 10px;
+  width: 60%;
+  font-size: 1.2rem;
+  border: none;
+  border-color: transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: white;
+  box-shadow: 0 0 10px var(--pink-glow);
+}
+
+.nameInput:focus {
+  outline: none;
+  box-shadow: 0 0 20px var(--pink-glow), 0 0 40px var(--pink-glow);
+
+}
+
+.nameInput::placeholder{
+  color: #ffffff6b;
+}
+
+section>button{
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
+  border-color: transparent;
+  border-radius: 5px;
+  background: var(--pink-glow);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--pink-glow);
+}
+
+section>button:hover {
+  box-shadow: 0 0 20px var(--pink-glow), 0 0 40px var(--pink-glow);
 }
