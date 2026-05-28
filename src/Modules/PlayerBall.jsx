@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Engine, Render, Runner, Bodies, Composite } from 'matter-js'
 
-export default function PlayerBall() {
-  const engine = useRef(Engine.create())
+export default function PlayerBall(props) {
+  const engine = useRef(props.engine || Engine.create())
   const runner = useRef(Runner.create())
   // We use this state just to know how many divs to mount.
   // The actual 60fps movement will bypass React state for performance.
@@ -31,7 +31,7 @@ export default function PlayerBall() {
     Runner.run(runner.current, engine.current)
 
     const radius = 25 // 50px wide div
-    const ball = Bodies.circle(100, 100, radius, {
+    const ball = Bodies.circle(props.x, props.y, radius, {
       restitution: 1.5,
       friction: 0.005
     })
@@ -77,7 +77,7 @@ export default function PlayerBall() {
 
   return (
     <div 
-      style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}
+      
     >
 
       {/* Map over the IDs to render the actual HTML Divs */}
