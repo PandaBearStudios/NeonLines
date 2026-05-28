@@ -7,6 +7,8 @@
 body {
   --inner-color: #501d5a;
   --pink-glow: #ff6ec4; 
+  --gradient: white, red, green, blue, var(--pink-glow), white;
+  --conic-gradient: conic-gradient(var(--gradient));
 
   display: flex;
   justify-content: center;
@@ -33,14 +35,41 @@ h1 {
 
 section {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
+
   width: 400px;
   height: 400px;
-  background: var(--inner-color);
+  border: 4px solid transparent;
   border-radius: 50%;
-  border: 2px solid var(--pink-glow);
-  box-shadow: 0 0 50px var(--pink-glow);
+  background: linear-gradient(var(--inner-color) 0 0) padding-box,
+  var(--conic-gradient) border-box;
+  position: relative;
+  isolation: isolate;
+}
+
+section::after,
+section::before {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+}
+
+section::before {
+  background: var(--inner-color);
+  z-index: -1;
+  inset: 1rem;
+  filter: blur(1rem);
+}
+
+
+section::after {
+  background: var(--conic-gradient) border-box;
+  z-index: -2;
+  inset: -1rem;
+  filter: blur(1rem);
 }
 
 
@@ -63,8 +92,9 @@ section .innerGlow {
   padding: 10px;
   width: 60%;
   font-size: 1.2rem;
-  border: none;
-  border-color: transparent;
+  border-style: solid;
+  border-color: var(--pink-glow);
+  border-width: 3px;
   border-radius: 5px;
   background: transparent;
   color: white;
