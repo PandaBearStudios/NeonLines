@@ -7,10 +7,11 @@
 body {
   --inner-color: #501d5a;
   --pink-glow: #ff6ec4; 
-  --gradient: white, red, green, blue, var(--pink-glow), white;
+  --gradient: white, rgb(255, 106, 106), rgb(57, 128, 57), rgb(93, 93, 255), var(--pink-glow), white;
   --conic-gradient: conic-gradient(var(--gradient));
 
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -18,12 +19,17 @@ body {
   background: radial-gradient(circle, var(--inner-color) 20%, #1a0420 80%);
 }
 
+.nav{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 h1 {
   font-family: 'NeonFont', sans-serif;
   font-size: 4rem;
   
-
-
   background: linear-gradient(45deg, var(--pink-glow), #7873f5, red);
   -webkit-background-clip: text;
   background-clip: text;
@@ -60,7 +66,7 @@ section::before {
 section::before {
   background: var(--inner-color);
   z-index: -1;
-  inset: 1rem;
+  inset: 0.5rem;
   filter: blur(1rem);
 }
 
@@ -68,24 +74,10 @@ section::before {
 section::after {
   background: var(--conic-gradient) border-box;
   z-index: -2;
-  inset: -1rem;
+  inset: -0.5rem;
   filter: blur(1rem);
 }
 
-
-section .innerGlow {
-  display: flex;
-  flex-direction: column;
-  justify-content:center;
-  align-items: center;
-  gap: 20px;
-
-  width: 400px;
-  height: 400px;
-  background: transparent;
-  border-radius: 50%;
-  box-shadow: 0 0 50px var(--pink-glow) inset;
-}
 
 .nameInput{
   margin-top: 20px;
@@ -112,9 +104,12 @@ section .innerGlow {
 }
 
 section>button{
-  margin-top: 20px;
+  width: 50%;
+  font-family: 'NeonFont', sans-serif;
+  font-size: 2rem;
+  font-weight:1000;
   padding: 10px 20px;
-  font-size: 1.2rem;
+  margin-top: 20px;
   border: none;
   border-color: transparent;
   border-radius: 5px;
@@ -122,6 +117,7 @@ section>button{
   color: white;
   cursor: pointer;
   box-shadow: 0 0 10px var(--pink-glow);
+  
 }
 
 section>button:hover {

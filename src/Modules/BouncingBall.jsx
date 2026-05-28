@@ -1,11 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "../Styles/BouncingBall.css";
 
-
-function ballRectCollision(ball, rect) {
-  const ballRect = ball.getBoundingClientRect();
-  const rectRect = rect.getBoundingClientRect();
-
+function ballRectCollision(ballRect, rectRect) {
   return !(
     ballRect.right < rectRect.left ||
     ballRect.left > rectRect.right ||
@@ -14,71 +10,73 @@ function ballRectCollision(ball, rect) {
   );
 }
 
-
 export default function BouncingBall() {
-    const ballRef = useRef(null);
-    const [colliders, setColliders] = useState(document.querySelectorAll(".collider"));
+  const ballRef = useRef(null);
 
   useEffect(() => {
     const ball = ballRef.current;
+    if (!ball) return;
 
-    let x = 100;
-    let y = 100;
+    let x = -10;
+    let y = -400; 
 
-    let vx = 4; // horizontal velocity
-    let vy = 2; // vertical velocity
+    let vx = 0; 
+    let vy = 0; 
 
-    const gravity = 0.4;
-    const bounce = 0.8;
+    const gravity = 0.5;
+    const bounce = 1.00000001; 
+    const size = 60; 
 
-    const size = 60;
+    let animationId; 
 
     function animate() {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      // apply gravity
+      // 1. Apply gravity
       vy += gravity;
 
-      // move ball
+      // 2. Move ball
       x += vx;
       y += vy;
 
-      // collision: floor
-      if (y + size >= height) {
-        y = height - size;
-        vy *= -bounce;
-      }
+      // Note: we get the bounding box AFTER adding the velocity
+      // so we know exactly where it is attempting to go this frame
+      const ballRect = ball.getBoundingClientRect();
+      const colliders = document.querySelectorAll(".collider");
+      let isGrounded = false;
 
-      // collision: ceiling
-      if (y <= 0) {
-        y = 0;
-        vy *= -bounce;
-      }
+      // 3. Check collisions
+      colliders.forEach((collider) => {
+        const rectRect = collider.getBoundingClientRect();
 
-      // collision: right wall
-      if (x + size >= width) {
-        x = width - size;
-        vx *= -bounce;
-      }
+        if (ballRectCollision(ballRect, rectRect)) {
+          // FIX: Only trigger a bounce if the ball is falling downward
+          if (vy > 0) {
+            // Calculate exactly how many pixels the ball penetrated the floor
+            const overlapY = ballRect.bottom - rectRect.top;
+            
+            // Push the relative Y translation back up by that exact amount
+            y -= overlapY; 
+            
+            // Reverse velocity and lose some energy
+            vy *= -bounce;
+            isGrounded = true;
+          }
+        }
+      });
 
-      // collision: left wall
-      if (x <= 0) {
-        x = 50;
-        vx *= -bounce;
-      }
-
-      // stop tiny endless floor jitter
-      if (Math.abs(vy) < 0.5 && y + size >= height) {
+      // 4. Stop tiny endless floor jitter
+      if (isGrounded && Math.abs(vy) < 1.5) {
         vy = 0;
       }
 
+      // 5. Update DOM
       ball.style.transform = `translate(${x}px, ${y}px)`;
 
-      requestAnimationFrame(animate);
+      // 6. Request next frame
+      animationId = requestAnimationFrame(animate);
     }
 
     animate();
+    return () => cancelAnimationFrame(animationId);
   }, []);
 
   return <div ref={ballRef} className="gravity-ball" />;

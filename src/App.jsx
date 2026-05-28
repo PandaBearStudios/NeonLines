@@ -12,12 +12,16 @@ function App() {
   
   return (
     <>
-      <h1>Neon Lines</h1>
-      <section>
+    <div className="nav">
+      
+      <BouncingBall />
+      <section className='collider'>
+        <h1>Neon Lines</h1>
         <input type="text" className='nameInput' placeholder="Enter your name" />
         <button>Play</button>
         <button>Settings</button>
       </section>
+      </div>
     </>
   )
 }
