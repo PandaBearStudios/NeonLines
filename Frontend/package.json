@@ -12,6 +12,7 @@
   "dependencies": {
     "framer-motion": "^12.40.0",
     "matter-js": "^0.20.0",
+    "playroomkit": "^0.0.96",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1"
