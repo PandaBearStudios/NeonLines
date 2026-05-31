@@ -32,6 +32,7 @@ export default function PlayerBall(props) {
 
     const radius = 25 // 50px wide div
     const ball = Bodies.circle(props.x, props.y, radius, {
+      id: props.id,
       restitution: 1.5,
       friction: 0.005
     })
