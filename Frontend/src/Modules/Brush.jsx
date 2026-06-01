@@ -13,6 +13,7 @@ export default function Brush({ player, color }) {
 
     const handleMouseDown = () => {
         if (!isMe) return; // Ignore clicks if this isn't our player
+        myPlayer().setState('ink', 100); // Reset ink to 100 on mouse down
         isDrawing.current = true;
         player.setState('clearOldBrush', true);
         player.setState('visualBrushes', []); 
@@ -26,11 +27,15 @@ export default function Brush({ player, color }) {
     const handleMouseMove = (e) => {
         if (!isMe || !isDrawing.current) return;
 
-        player.setState('spawnBrush', {
-            x: e.clientX,
-            y: e.clientY,
-            id: `${player.id}-${Date.now()}-${Math.random()}`
-        });
+        if (myPlayer().getState('ink') > 0) {
+            myPlayer().setState('ink', myPlayer().getState('ink') - 1);
+            
+            player.setState('spawnBrush', {
+                x: e.clientX,
+                y: e.clientY,
+                id: `${player.id}-${Date.now()}-${Math.random()}`
+            });
+        }
     };
 
     return (

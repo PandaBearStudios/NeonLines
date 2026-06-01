@@ -16,30 +16,32 @@ export default function TestEnv() {
     }, [players]);
 
     useEffect(() => {
-    const handleVisibilityChange = () => {
-        // If the browser tab is hidden and we are the current host
-        if (document.hidden && isHost()) {
-            const me = myPlayer();
-            
-            // Find the first available player that ISN'T us
-            const nextHost = playersRef.current.find((p) => p.id !== me?.id);
-            
-            if (nextHost) {
-                console.log("Tab backgrounded! Transferring Host to:", nextHost.id);
+        myPlayer().setState('ink', 100);
+        console.log("Initial Ink Set to 100 for player:", myPlayer().id);
+        const handleVisibilityChange = () => {
+            // If the browser tab is hidden and we are the current host
+            if (document.hidden && isHost()) {
+                const me = myPlayer();
                 
-                // Manually force Playroom to make them the host
-                transferHost(nextHost.id); 
+                // Find the first available player that ISN'T us
+                const nextHost = playersRef.current.find((p) => p.id !== me?.id);
                 
-                // Optional: Stop our local physics engine immediately to prevent ghost calculations
-                if (engineRef.current) {
-                   // Matter.Runner.stop(runnerRef.current); 
-                   // (You'll need a ref for your runner if you want to cleanly stop it here)
+                if (nextHost) {
+                    console.log("Tab backgrounded! Transferring Host to:", nextHost.id);
+                    
+                    // Manually force Playroom to make them the host
+                    transferHost(nextHost.id); 
+                    
+                    // Optional: Stop our local physics engine immediately to prevent ghost calculations
+                    if (engineRef.current) {
+                    // Matter.Runner.stop(runnerRef.current); 
+                    // (You'll need a ref for your runner if you want to cleanly stop it here)
+                    }
+                } else {
+                    console.log("No other players available to take over. Game is paused.");
                 }
-            } else {
-                console.log("No other players available to take over. Game is paused.");
             }
-        }
-    };
+        };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     
