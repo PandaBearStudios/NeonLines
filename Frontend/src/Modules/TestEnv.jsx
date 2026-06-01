@@ -6,21 +6,18 @@ import Player from './Player';
 export default function TestEnv() {
     const players = usePlayersList();
     
-    // NEW: Keep a mutable reference of the player list for the physics loop
     const playersRef = useRef(players); 
     const engineRef = useRef(null);
     const bodiesRef = useRef({}); 
     const brushBodiesRef = useRef({}); 
 
-    // Always keep the ref updated with the latest players
     useEffect(() => {
         playersRef.current = players;
     }, [players]);
 
-    useEffect(() => {
-        if (!isHost()) return; 
-
-        // Initialize Host Engine
+    // NEW: A reusable function to boot the engine
+    const startPhysicsEngine = () => {
+        console.log("Booting Physics Engine! I am the Host.");
         engineRef.current = Engine.create();
         const engine = engineRef.current;
         const cw = window.innerWidth;
@@ -37,11 +34,9 @@ export default function TestEnv() {
         const runner = Runner.create();
         Runner.run(runner, engine);
 
-        // Host Physics & Broadcast Loop
         Events.on(engine, 'afterUpdate', () => {
             if (!bodiesRef.current) bodiesRef.current = {};
 
-            // FIX: Iterate over playersRef.current to avoid stale closures
             playersRef.current.forEach((p) => {
                 const body = bodiesRef.current[p.id];
                 if (body) {
@@ -51,8 +46,8 @@ export default function TestEnv() {
                         angle: body.angle 
                     });
                 }
-
-                // --- HOST BRUSH LOGIC ---
+                
+                // ... (Keep your existing HOST BRUSH LOGIC here) ...
                 const pendingBrush = p.getState('spawnBrush');
                 if (pendingBrush && pendingBrush.id !== p.getState('lastProcessedBrushId')) {
                     
@@ -81,32 +76,43 @@ export default function TestEnv() {
                 }
             });
         });
+    };
 
-        return () => {
-            Runner.stop(runner);
-            Engine.clear(engine);
-        };
-    }, []); // <--- FIX: Empty dependency array. Engine only creates ONCE.
-
-    // Handle spawning player avatars (Host only)
+    // The Host Migration Check
     useEffect(() => {
+        // If we are the host, AND the engine hasn't been started yet...
+        if (isHost() && !engineRef.current) {
+            startPhysicsEngine();
+        }
+
+        // We only want to handle player spawning if we are the active host
         if (!isHost() || !engineRef.current) return;
         if (!bodiesRef.current) bodiesRef.current = {};
 
         players.forEach((p) => {
             if (!bodiesRef.current[p.id]) {
-                const ball = Bodies.circle(window.innerWidth / 2, 100, 25, {
+                // MIGRATION MAGIC: Check if they already have a network position!
+                const existingPos = p.getState('pos');
+                
+                // If they have a previous position, spawn them there. Otherwise, drop from ceiling.
+                const startX = existingPos ? existingPos.x : 200 + (Math.random() * 50);
+                const startY = existingPos ? existingPos.y : 100;
+
+                const ball = Bodies.circle(startX, startY, 25, {
                     restitution: 1.2,
                     friction: 0.005
                 });
+                
                 Composite.add(engineRef.current.world, ball);
                 bodiesRef.current[p.id] = ball;
             }
         });
-    }, [players]); // This safely runs whenever someone joins
+
+    // Run this check every time the player list changes (like when the old host disconnects)
+    }, [players]); 
 
     return (
-        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative', backgroundColor: '#1e272e' }}>
+        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
             {players.map((player) => (
                 <Player key={player.id} player={player} />
             ))}
