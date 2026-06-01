@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePlayerState } from 'playroomkit';
 
-export default function PlayerBall({ player }) {
+export default function PlayerBall({ player, color }) {
     // 1. Read the position calculated by the Host
     const [pos] = usePlayerState(player, 'pos');
 
@@ -17,8 +17,8 @@ export default function PlayerBall({ player }) {
             width: '50px',
             height: '50px',
             borderRadius: '50%',
-            backgroundColor: '#ff4757',
-            boxShadow: '0 0 15px rgba(255, 71, 87, 0.5)',
+            backgroundColor: color || '#ff4757',
+            boxShadow: '0 0 15px ' + color || '#ff4757',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

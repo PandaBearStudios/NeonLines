@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { usePlayerState, myPlayer } from 'playroomkit';
 
-export default function Brush({ player }) {
+export default function Brush({ player, color }) {
     const isDrawing = useRef(false);
     
     // Read the array of validated visual dots for this specific player
@@ -59,8 +59,8 @@ export default function Brush({ player }) {
                         left: 0,
                         width: '20px',
                         height: '20px',
-                        backgroundColor: 'rgb(179, 255, 0)',
-                        filter: 'drop-shadow(0 0 5px rgb(179, 255, 0))',
+                        backgroundColor: color || '#b3ff00',
+                        filter: 'drop-shadow(0 0 5px ' + color + ')',
                         borderRadius: '50%',
                         pointerEvents: 'none',
                         transform: `translate(${dot.x}px, ${dot.y}px) translate(-50%, -50%)`

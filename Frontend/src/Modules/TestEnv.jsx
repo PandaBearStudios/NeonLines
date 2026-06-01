@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Engine, Runner, Bodies, Composite, Events } from 'matter-js';
-import { usePlayersList, isHost } from 'playroomkit';
+import { usePlayersList, isHost, transferHost, myPlayer} from 'playroomkit';
 import Player from './Player';
 
 export default function TestEnv() {
@@ -15,6 +15,40 @@ export default function TestEnv() {
         playersRef.current = players;
     }, [players]);
 
+    useEffect(() => {
+    const handleVisibilityChange = () => {
+        // If the browser tab is hidden and we are the current host
+        if (document.hidden && isHost()) {
+            const me = myPlayer();
+            
+            // Find the first available player that ISN'T us
+            const nextHost = playersRef.current.find((p) => p.id !== me?.id);
+            
+            if (nextHost) {
+                console.log("Tab backgrounded! Transferring Host to:", nextHost.id);
+                
+                // Manually force Playroom to make them the host
+                transferHost(nextHost.id); 
+                
+                // Optional: Stop our local physics engine immediately to prevent ghost calculations
+                if (engineRef.current) {
+                   // Matter.Runner.stop(runnerRef.current); 
+                   // (You'll need a ref for your runner if you want to cleanly stop it here)
+                }
+            } else {
+                console.log("No other players available to take over. Game is paused.");
+            }
+        }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+}, []);
+
+    
     // NEW: A reusable function to boot the engine
     const startPhysicsEngine = () => {
         console.log("Booting Physics Engine! I am the Host.");
@@ -114,7 +148,7 @@ export default function TestEnv() {
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
             {players.map((player) => (
-                <Player key={player.id} player={player} />
+                <Player key={player.id} player={player} color={"#" + Math.floor(Math.random()*16777215).toString(16)}/>
             ))}
         </div>
     );

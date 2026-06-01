@@ -2,11 +2,11 @@ import React from 'react';
 import PlayerBall from "./PlayerBall.jsx";
 import Brush from "./Brush.jsx";
 
-export default function Player({ player }) {
+export default function Player({ player, color }) {
     return (
         <>
-            <PlayerBall player={player} />
-            <Brush player={player} />
+            <PlayerBall player={player} color={color}/>
+            <Brush player={player} color={color} />
         </>
     );
 }
