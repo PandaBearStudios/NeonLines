@@ -8,6 +8,8 @@ export default function PlayerBall({ player, color }) {
     // 2. If the host hasn't calculated our position yet, render nothing
     if (!pos) return null;
 
+    if (!player.getState('alive')) 
+        return(<div></div>)
     // 3. Render exactly one ball using the Host's coordinates
     return (
         <div style={{

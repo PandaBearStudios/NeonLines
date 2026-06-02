@@ -12,12 +12,18 @@ export default function TestEnv() {
     const brushBodiesRef = useRef({}); 
 
     useEffect(() => {
+        if (isHost()) {
+            players.forEach(p => {
+                p.setState('alive', true);
+            });
+        }
+        
         playersRef.current = players;
     }, [players]);
 
     useEffect(() => {
         myPlayer().setState('ink', 100);
-        console.log("Initial Ink Set to 100 for player:", myPlayer().id);
+        myPlayer().setState('alive', true);
         const handleVisibilityChange = () => {
             // If the browser tab is hidden and we are the current host
             if (document.hidden && isHost()) {
@@ -53,7 +59,6 @@ export default function TestEnv() {
     
     // NEW: A reusable function to boot the engine
     const startPhysicsEngine = () => {
-        console.log("Booting Physics Engine! I am the Host.");
         engineRef.current = Engine.create();
         const engine = engineRef.current;
         const cw = window.innerWidth;
@@ -61,14 +66,26 @@ export default function TestEnv() {
 
         const walls = [
             Bodies.rectangle(cw / 2, -10, cw, 20, { isStatic: true }),
-            Bodies.rectangle(-10, ch / 2, 20, ch, { isStatic: true }),
-            Bodies.rectangle(cw / 2, ch + 10, cw, 20, { isStatic: true }),
-            Bodies.rectangle(cw + 10, ch / 2, 20, ch, { isStatic: true })
+            Bodies.rectangle(-10, ch / 2, 20, ch, { isStatic: true, label: 'Wall' }),
+            Bodies.rectangle(cw / 2, ch + 10, cw, 20, { isStatic: true, label: 'Wall' }),
+            Bodies.rectangle(cw + 10, ch / 2, 20, ch, { isStatic: true, label: 'Wall' })
         ];
         Composite.add(engine.world, walls);
 
         const runner = Runner.create();
         Runner.run(runner, engine);
+
+        Events.on(engine, 'collisionStart', (event) => {
+            const pairs = event.pairs;
+            pairs.forEach((pair) => {
+                const { bodyA, bodyB } = pair;
+
+                if(bodyA.label === 'Wall' || bodyB.label === 'Wall') {
+                   bodyA.label === 'Wall' ? Composite.remove(engine.world, bodyB): Composite.remove(engine.world, bodyA);
+                    playersRef.current.find(p => p.id === bodyA.id || p.id === bodyB.id)?.setState('alive', false);
+                }
+            });
+        });
 
         Events.on(engine, 'afterUpdate', () => {
             if (!bodiesRef.current) bodiesRef.current = {};
@@ -135,6 +152,7 @@ export default function TestEnv() {
                 const startY = existingPos ? existingPos.y : 100;
 
                 const ball = Bodies.circle(startX, startY, 25, {
+                    id: p.id,
                     restitution: 1.2,
                     friction: 0.005
                 });
@@ -150,7 +168,12 @@ export default function TestEnv() {
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
             {players.map((player) => (
-                <Player key={player.id} player={player} color={"#" + Math.floor(Math.random()*16777215).toString(16)}/>
+                player.getState('alive') !== false ?
+                    <Player key={player.id} player={player} color={"#" + Math.floor(Math.random()*16777215).toString(16)}/>
+                :
+                <div key={player.id} style={{position: 'absolute', top: 0, left: 0, color: 'white'}}>
+                    Player {player.id} is out!
+                </div>
             ))}
         </div>
     );
