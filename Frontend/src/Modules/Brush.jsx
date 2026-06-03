@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import { React, useRef, useEffect } from 'react';
 import { usePlayerState, myPlayer } from 'playroomkit';
 
 export default function Brush({ player, color }) {
     const isDrawing = useRef(false);
+    const clearBrush = usePlayerState(player, 'clearBrush')[0];
     
     // Read the array of validated visual dots for this specific player
     const [visualBrushes] = usePlayerState(player, 'visualBrushes');
@@ -13,20 +14,24 @@ export default function Brush({ player, color }) {
 
     const handleMouseDown = () => {
         if (!isMe || !myPlayer().getState('alive')) return; // Ignore clicks if this isn't our player
+        player.setState('clearBrush', true); // Ensure clearBrush is false when we start drawing
         myPlayer().setState('ink', 100); // Reset ink to 100 on mouse down
         isDrawing.current = true;
-        player.setState('clearOldBrush', true);
         player.setState('visualBrushes', []); 
     };
 
     const handleMouseUp = () => {
         if (!isMe || !myPlayer().getState('alive')) return;
         isDrawing.current = false;
+        setTimeout(() => {
+            if (isDrawing.current) return; // If the user started drawing again, don't clear
+            player.setState('visualBrushes', []); 
+            player.setState('clearBrush', true);// Reset clearBrush after a short delay
+        }, 10000);
     };
 
     const handleMouseMove = (e) => {
         if (!isMe || !isDrawing.current || !myPlayer().getState('alive')) return;
-
         if (myPlayer().getState('ink') > 0) {
             myPlayer().setState('ink', myPlayer().getState('ink') - 1);
 
@@ -39,6 +44,7 @@ export default function Brush({ player, color }) {
     };
 
     if (!myPlayer().getState('alive')) return null;
+
 
     return (
         <div
@@ -57,9 +63,12 @@ export default function Brush({ player, color }) {
             }}
         >
             {/* Render neon dots for this player */}
-            {dots.map((dot) => (
+            {
+            myPlayer().getState('clearBrush') ? null :
+            dots.map((dot) => (
                 <div
                     key={dot.id}
+                    className="brush-dot"
                     style={{
                         position: 'absolute',
                         top: 0,

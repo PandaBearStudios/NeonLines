@@ -24,6 +24,7 @@ export default function GameEnv() {
     useEffect(() => {
         myPlayer().setState('ink', 100);
         myPlayer().setState('alive', true);
+        myPlayer().setState('clearBrush', false);
         const handleVisibilityChange = () => {
             // If the browser tab is hidden and we are the current host
             if (document.hidden && isHost()) {
@@ -91,6 +92,12 @@ export default function GameEnv() {
             if (!bodiesRef.current) bodiesRef.current = {};
 
             playersRef.current.forEach((p) => {
+                if (p.getState('clearBrush')) {
+                    const oldBodies = brushBodiesRef.current[p.id] || [];
+                    oldBodies.forEach(b => { Composite.remove(engine.world, b); });
+                    brushBodiesRef.current[p.id] = []; 
+                    p.setState('clearBrush', false); 
+                }
                 const body = bodiesRef.current[p.id];
                 if (body) {
                     p.setState('pos', { 
