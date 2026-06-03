@@ -3,7 +3,7 @@ import { Engine, Runner, Bodies, Composite, Events } from 'matter-js';
 import { usePlayersList, isHost, transferHost, myPlayer} from 'playroomkit';
 import Player from './Player';
 
-export default function TestEnv() {
+export default function GameEnv() {
     const players = usePlayersList();
     
     const playersRef = useRef(players); 
@@ -65,10 +65,10 @@ export default function TestEnv() {
         const ch = window.innerHeight;
 
         const walls = [
-            Bodies.rectangle(cw / 2, -10, cw, 20, { isStatic: true }),
-            Bodies.rectangle(-10, ch / 2, 20, ch, { isStatic: true, label: 'Wall' }),
-            Bodies.rectangle(cw / 2, ch + 10, cw, 20, { isStatic: true, label: 'Wall' }),
-            Bodies.rectangle(cw + 10, ch / 2, 20, ch, { isStatic: true, label: 'Wall' })
+            Bodies.rectangle(cw / 2, -10, cw, 20, { isStatic: true, }),
+            Bodies.rectangle(-10, ch / 2, 20, ch, { isStatic: true, label: 'Wall', fillStyle: 'red' }),
+            Bodies.rectangle(cw / 2, ch + 10, cw, 20, { isStatic: true, label: 'Wall', fillStyle: 'red' }),
+            Bodies.rectangle(cw + 10, ch / 2, 20, ch, { isStatic: true, label: 'Wall', fillStyle: 'red' }),
         ];
         Composite.add(engine.world, walls);
 
@@ -148,12 +148,12 @@ export default function TestEnv() {
                 const existingPos = p.getState('pos');
                 
                 // If they have a previous position, spawn them there. Otherwise, drop from ceiling.
-                const startX = existingPos ? existingPos.x : 200 + (Math.random() * 50);
-                const startY = existingPos ? existingPos.y : 100;
+                const startX = existingPos ? existingPos.x : 100 + (Math.random() * 1000);
+                const startY = existingPos ? existingPos.y : 500 + (Math.random() * -500);
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.2,
+                    restitution: 1.5,
                     friction: 0.005
                 });
                 
@@ -167,6 +167,10 @@ export default function TestEnv() {
 
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
+            
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '20px', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
             {players.map((player) => (
                 player.getState('alive') !== false ?
                     <Player key={player.id} player={player} color={"#" + Math.floor(Math.random()*16777215).toString(16)}/>

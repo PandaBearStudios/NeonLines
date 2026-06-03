@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { insertCoin } from "playroomkit"
 import './index.css'
 import App from './App.jsx'
-import TestEnv from './Modules/TestEnv.jsx'
+import GameEnv from './Modules/GameEnv.jsx'
 
 const router = createBrowserRouter([
   {
@@ -12,8 +12,8 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/test",
-    element: <TestEnv />,
+    path: "/game",
+    element: <GameEnv />,
   }
 ]);
 
