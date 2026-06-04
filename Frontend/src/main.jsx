@@ -18,6 +18,8 @@ const router = createBrowserRouter([
 ]);
 
 insertCoin({
+  matchmaking: true,
+  maxPlayersPerRoom: 3,
   skipLobby: true,
 }).then(() => {
   createRoot(document.getElementById('root')).render(

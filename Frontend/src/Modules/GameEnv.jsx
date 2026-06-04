@@ -176,6 +176,7 @@ export default function GameEnv() {
     return (
         <>
         <EndGameScreen />
+        
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
             
         <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />

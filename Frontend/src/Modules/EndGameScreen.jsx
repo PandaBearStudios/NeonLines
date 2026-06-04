@@ -1,12 +1,26 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { myPlayer, startMatchmaking, insertCoin } from 'playroomkit';
 import  '../css/EndGameScreen.css';
 
 export default function EndGameScreen() {
+    const navigate = useNavigate();
+    const handleNewMatch = async () => {
+        myPlayer().leaveRoom();
+        startMatchmaking(); // Start matchmaking again to find a new game
+        window.location.reload(); // Force reload to reset game state and trigger matchmaking again
+    }
+
+    const handleQuit = () => {
+        myPlayer().leaveRoom();
+        navigate('/');
+    }
     return(
-        <div className="endgame-screen">
+        <div className="endgame-screen" >
             Game Over
             <div className="endgame-buttons">
-                <button>Another Game</button>
-                <button>Quit</button>
+                <button onClick={handleNewMatch}>New Match</button>
+                <button onClick={handleQuit}>Quit</button>
             </div>
         </div>
     );
