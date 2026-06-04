@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Engine, Runner, Bodies, Composite, Events } from 'matter-js';
 import { usePlayersList, isHost, transferHost, myPlayer} from 'playroomkit';
 import Player from './Player';
+import EndGameScreen from './EndGameScreen';
 
 export default function GameEnv() {
     const players = usePlayersList();
@@ -160,7 +161,7 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.3,
+                    restitution: 1.5,
                     friction: 0.005
                 });
                 
@@ -173,6 +174,8 @@ export default function GameEnv() {
     }, [players]); 
 
     return (
+        <>
+        <EndGameScreen />
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative',  }}>
             
         <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
@@ -187,5 +190,7 @@ export default function GameEnv() {
                 </div>
             ))}
         </div>
+        </>
+        
     );
 }

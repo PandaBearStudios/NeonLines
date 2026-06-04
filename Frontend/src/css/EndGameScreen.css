@@ -1,0 +1,49 @@
+@font-face {
+    font-family: 'neon';
+    src: url('../assets/Fonts/neon-font/Neon-e2wg.ttf') format('truetype');
+}
+
+.endgame-screen {
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    width: 50vw;
+    height: 50vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 48px;
+    font-family: 'neon', sans-serif;
+    border: 5px solid red;
+    border-radius: 20px;
+    box-shadow: 0 0 20px red, 0 0 40px red;
+    z-index: 1000;
+}
+
+.endgame-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.endgame-buttons button {
+    padding: 10px 20px;
+    font-size: 24px;
+    width: 200px;
+    color: white;
+    background-color: red;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 10px red, 0 0 20px red;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.endgame-buttons button:hover {
+    background-color: darkred;
+    box-shadow: 0 0 15px red, 0 0 30px red;
+}

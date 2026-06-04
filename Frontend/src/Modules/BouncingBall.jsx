@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import "../Styles/BouncingBall.css";
+import "../css/BouncingBall.css";
 
 function ballRectCollision(ballRect, rectRect) {
   return !(
