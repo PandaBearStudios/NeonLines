@@ -1,4 +1,4 @@
-import { React, useRef, useEffect } from 'react';
+import { React, useRef, useEffect, useState } from 'react';
 import { usePlayerState, myPlayer } from 'playroomkit';
 
 export default function Brush({ player, color }) {
@@ -15,7 +15,7 @@ export default function Brush({ player, color }) {
     const handleMouseDown = () => {
         if (!isMe || !myPlayer().getState('alive')) return; // Ignore clicks if this isn't our player
         player.setState('clearBrush', true); // Ensure clearBrush is false when we start drawing
-        myPlayer().setState('ink', 100); // Reset ink to 100 on mouse down
+        myPlayer().setState('ink', 30); // Reset ink to 30 on mouse down
         isDrawing.current = true;
         player.setState('visualBrushes', []); 
     };
@@ -23,11 +23,7 @@ export default function Brush({ player, color }) {
     const handleMouseUp = () => {
         if (!isMe || !myPlayer().getState('alive')) return;
         isDrawing.current = false;
-        setTimeout(() => {
-            if (isDrawing.current) return; // If the user started drawing again, don't clear
-            player.setState('visualBrushes', []); 
-            player.setState('clearBrush', true);// Reset clearBrush after a short delay
-        }, 10000);
+        
     };
 
     const handleMouseMove = (e) => {

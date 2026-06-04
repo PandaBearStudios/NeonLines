@@ -22,7 +22,7 @@ export default function GameEnv() {
     }, [players]);
 
     useEffect(() => {
-        myPlayer().setState('ink', 100);
+        myPlayer().setState('ink', 30);
         myPlayer().setState('alive', true);
         myPlayer().setState('clearBrush', false);
         const handleVisibilityChange = () => {
@@ -120,7 +120,7 @@ export default function GameEnv() {
 
                     const brushBall = Bodies.circle(pendingBrush.x, pendingBrush.y, 10, {
                         isStatic: true,
-                        restitution: 1.4,
+                        restitution: 1,
                         friction: 0.005
                     });
 
@@ -160,7 +160,7 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.5,
+                    restitution: 1.3,
                     friction: 0.005
                 });
                 
