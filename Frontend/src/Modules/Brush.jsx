@@ -15,7 +15,7 @@ export default function Brush({ player, color }) {
     const handleMouseDown = () => {
         if (!isMe || !myPlayer().getState('alive')) return; // Ignore clicks if this isn't our player
         player.setState('clearBrush', true); // Ensure clearBrush is false when we start drawing
-        myPlayer().setState('ink', 30); // Reset ink to 30 on mouse down
+        myPlayer().setState('ink', 50); // Reset ink to 50 on mouse down
         isDrawing.current = true;
         player.setState('visualBrushes', []); 
     };

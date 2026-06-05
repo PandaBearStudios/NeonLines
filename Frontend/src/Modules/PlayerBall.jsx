@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePlayerState } from 'playroomkit';
+import { usePlayerState, myPlayer } from 'playroomkit';
 
 export default function PlayerBall({ player, color }) {
     // 1. Read the position calculated by the Host
@@ -31,7 +31,7 @@ export default function PlayerBall({ player, color }) {
             pointerEvents: 'none', // Lets clicks pass through to the Brush component
             transform: `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%) rotate(${pos.angle}rad)`
         }}>
-            Player
+            {myPlayer().getState('name')}
         </div>
     );
 }
