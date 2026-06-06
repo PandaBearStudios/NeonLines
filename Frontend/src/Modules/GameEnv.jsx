@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Engine, Runner, Bodies, Composite, Events } from 'matter-js';
 import { usePlayersList, isHost, transferHost, myPlayer, startMatchmaking, onPlayerJoin} from 'playroomkit';
 import Player from './Player';
@@ -10,13 +11,19 @@ export default function GameEnv() {
     const playersRef = useRef(players); 
     const engineRef = useRef(null);
     const bodiesRef = useRef({}); 
-    const brushBodiesRef = useRef({}); 
+    const brushBodiesRef = useRef({});
+
+    const navigate = useNavigate();
+
+
+    
 
     
 
     useEffect(() => {
-        
+
         if (isHost()) {
+            
             players.forEach(p => {
                 p.setState('alive', true);
             });
@@ -144,12 +151,10 @@ export default function GameEnv() {
 
     // The Host Migration Check
     useEffect(() => {
-        // If we are the host, AND the engine hasn't been started yet...
         if (isHost() && !engineRef.current) {
             startPhysicsEngine();
         }
 
-        // We only want to handle player spawning if we are the active host
         if (!isHost() || !engineRef.current) return;
         if (!bodiesRef.current) bodiesRef.current = {};
 
@@ -158,7 +163,6 @@ export default function GameEnv() {
                 // MIGRATION MAGIC: Check if they already have a network position!
                 const existingPos = p.getState('pos');
                 
-                // If they have a previous position, spawn them there. Otherwise, drop from ceiling.
                 const startX = existingPos ? existingPos.x : 100 + (Math.random() * 1000);
                 const startY = existingPos ? existingPos.y : 500 + (Math.random() * -500);
 
@@ -170,11 +174,56 @@ export default function GameEnv() {
                 
                 Composite.add(engineRef.current.world, ball);
                 bodiesRef.current[p.id] = ball;
+
+                // --- NEW: MIGRATION MAGIC FOR BRUSH STROKES ---
+                // If the player already has visual brushes in Playroom from before the reload,
+                // we must recreate their physical bodies in the new host's Matter.js world.
+                const existingBrushes = p.getState('visualBrushes') || [];
+                
+                if (existingBrushes.length > 0) {
+                    if (!brushBodiesRef.current[p.id]) {
+                        brushBodiesRef.current[p.id] = [];
+                    }
+                    
+                    existingBrushes.forEach((brushDot) => {
+                        const brushBall = Bodies.circle(brushDot.x, brushDot.y, 10, {
+                            isStatic: true,
+                            restitution: 1,
+                            friction: 0.005
+                        });
+                        
+                        Composite.add(engineRef.current.world, brushBall);
+                        brushBodiesRef.current[p.id].push(brushBall);
+                    });
+                }
+                // ----------------------------------------------
             }
         });
+    }, [players]);
 
-    // Run this check every time the player list changes (like when the old host disconnects)
-    }, [players]); 
+    useEffect(() => {
+        // Check if this is a true refresh/reload of the page (not first visit)
+        const wasAlreadyInRoom = sessionStorage.getItem('inGameEnv');
+        
+        if (wasAlreadyInRoom) {
+            // This is a refresh of an already-loaded page, so remove and go home
+            myPlayer().leaveRoom();
+            navigate('/');
+            sessionStorage.removeItem('inGameEnv');
+        } else {
+            // First time entering this component, mark it in sessionStorage
+            sessionStorage.setItem('inGameEnv', 'true');
+        }
+        
+        // Cleanup: remove the flag when component unmounts
+        return () => {
+            // Only remove if navigating away (not on refresh since that reloads the page anyway)
+            if (!sessionStorage.getItem('refreshing')) {
+                sessionStorage.removeItem('inGameEnv');
+            }
+        };
+  }, [navigate]);
+   
 
     return (
         <>
