@@ -31,7 +31,7 @@ export default function PlayerBall({ player, color }) {
             pointerEvents: 'none', // Lets clicks pass through to the Brush component
             transform: `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%) rotate(${pos.angle}rad)`
         }}>
-            {myPlayer().getState('name')}
+            {player.getState('name')}
         </div>
     );
 }
