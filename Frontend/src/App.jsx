@@ -33,6 +33,7 @@ function App() {
         <h1>Neon Lines</h1>
         <input type="text" className='nameInput' placeholder="Enter your name" />
         <button onClick={handlePlay}>Play</button>
+        <button>How to Play</button>
         <button>Settings</button>
       </section>
       </div>

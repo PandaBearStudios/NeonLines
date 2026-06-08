@@ -210,7 +210,7 @@ export default function GameEnv() {
             const activeProjectiles = [];
             const triggerRadius = 80;   
             const blastRadius = 250;    
-            const blastForce = 0.15;    
+            const blastForce = 0.1;    
             
             projectilesRef.current.forEach((proj) => {
                 let exploded = false;
@@ -302,7 +302,7 @@ export default function GameEnv() {
             if (!bodiesRef.current[p.id]) {
                 const existingPos = p.getState('pos');
                 const startX = existingPos ? existingPos.x : 100 + (Math.random() * 1000);
-                const startY = existingPos ? existingPos.y : 500 + (Math.random() * -500);
+                const startY = existingPos ? existingPos.y : 100;
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
