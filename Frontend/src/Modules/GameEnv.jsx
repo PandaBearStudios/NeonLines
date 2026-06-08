@@ -133,7 +133,7 @@ export default function GameEnv() {
                         p.setState('clearOldBrush', false); 
                     }
                     const brushBall = Bodies.circle(pendingBrush.x, pendingBrush.y, 10, {
-                        isStatic: true, restitution: 1, friction: 0.005
+                        isStatic: true, restitution: 1.5, friction: 0.005
                     });
                     Composite.add(engine.world, brushBall);
                     if (!brushBodiesRef.current[p.id]) brushBodiesRef.current[p.id] = [];
@@ -180,8 +180,8 @@ export default function GameEnv() {
 
             // --- 3. PROJECTILE EXPLOSION LOGIC ---
             const activeProjectiles = [];
-            const triggerRadius = 80;   
-            const blastRadius = 250;    
+            const triggerRadius = 300;   
+            const blastRadius = 500;    
             const blastForce = 0.15;    
             
             projectilesRef.current.forEach((proj) => {
@@ -254,11 +254,11 @@ export default function GameEnv() {
             if (!bodiesRef.current[p.id]) {
                 const existingPos = p.getState('pos');
                 const startX = existingPos ? existingPos.x : 100 + (Math.random() * 1000);
-                const startY = existingPos ? existingPos.y : 500 + (Math.random() * -500);
+                const startY = existingPos ? existingPos.y : 100 
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1,
+                    restitution: 1.4,
                     friction: 0.005
                 });
                 

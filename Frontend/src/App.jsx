@@ -11,6 +11,10 @@ function App() {
   const [count, setCount] = useState(0)
   const navigate = useNavigate();
   
+  useEffect(() => {
+    if (window.location.hash === '')
+        window.location.reload()
+  }, [])
 
   const handlePlay = async () => {
     let hash = ''
