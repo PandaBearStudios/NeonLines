@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
-import BouncingBall from './Modules/BouncingBall'
+import BouncingBall from './Components/BouncingBall'
 import './App.css'
 import { useNavigate } from 'react-router-dom';
 import { myPlayer, startMatchmaking, insertCoin } from 'playroomkit';
