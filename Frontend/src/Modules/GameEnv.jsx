@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Engine, Runner, Bodies, Composite, Events, Body } from 'matter-js'; 
 import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState } from 'playroomkit';
 import Player from './Player';
+import EndGameScreen from './EndGameScreen'
 
 // NEW: Renders the expanding shockwave rings
 const ExplosionsRenderer = ({ player }) => {
@@ -133,6 +134,8 @@ export default function GameEnv() {
                     }
                 } else if (bodyA.label === 'Wall' || bodyB.label === 'Wall') {
                     const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
+                    document.querySelector('.endgame-screen').style.visibility = "visible"
+                    myPlayer().leaveRoom()
                     Composite.remove(engine.world, otherBody);
                     playersRef.current.find(p => p.id === otherBody.id)?.setState('alive', false);
                 }
@@ -210,7 +213,7 @@ export default function GameEnv() {
             const activeProjectiles = [];
             const triggerRadius = 80;   
             const blastRadius = 250;    
-            const blastForce = 0.1;    
+            const blastForce = 0.15;    
             
             projectilesRef.current.forEach((proj) => {
                 let exploded = false;
@@ -345,7 +348,9 @@ export default function GameEnv() {
     }, [navigate]);
 
     return (
+
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+            <EndGameScreen/>
             {/* Inline CSS for the shockwave animation */}
             <style>{`
                 @keyframes shockwave {
