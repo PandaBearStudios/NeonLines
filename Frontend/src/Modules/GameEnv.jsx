@@ -1,14 +1,34 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Engine, Runner, Bodies, Composite, Events, Body } from 'matter-js'; 
-// IMPORT FIX: Added usePlayerState
 import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState } from 'playroomkit';
 import Player from './Player';
 
-// NEW: A dedicated component that forces a React re-render when projectile coordinates update
+// NEW: Renders the expanding shockwave rings
+const ExplosionsRenderer = ({ player }) => {
+    const [explosions] = usePlayerState(player, 'explosions');
+    if (!explosions || explosions.length === 0) return null;
+
+    return (
+        <>
+            {explosions.map(exp => (
+                <div key={exp.id} style={{
+                    position: 'absolute', top: 0, left: 0,
+                    width: '0px', height: '0px',
+                    border: '15px solid rgba(255, 165, 0, 0.8)', // Orange blast ring
+                    borderRadius: '50%',
+                    transform: `translate(${exp.x}px, ${exp.y}px) translate(-50%, -50%)`,
+                    pointerEvents: 'none', zIndex: 4,
+                    animation: 'shockwave 0.4s ease-out forwards'
+                }} />
+            ))}
+        </>
+    );
+};
+
+// Existing Projectile Renderer
 const ProjectilesRenderer = ({ player }) => {
     const [projectiles] = usePlayerState(player, 'activeProjectiles');
-    
     if (!projectiles || projectiles.length === 0) return null;
 
     return (
@@ -33,8 +53,8 @@ export default function GameEnv() {
     const bodiesRef = useRef({}); 
     const brushBodiesRef = useRef({});
     
-    // Refs for the Turret system
     const projectilesRef = useRef([]); 
+    const explosionsRef = useRef([]); // NEW: Tracks explosion coordinates
     const lastShotTimeRef = useRef(Date.now());
     const lastSyncTimeRef = useRef(Date.now()); 
 
@@ -74,7 +94,6 @@ export default function GameEnv() {
         const cw = window.innerWidth;
         const ch = window.innerHeight;
 
-        // Turret Body (Static)
         const turretBody = Bodies.rectangle(cw / 2, 50, 80, 80, { 
             isStatic: true, 
             label: 'Wall', 
@@ -97,11 +116,23 @@ export default function GameEnv() {
             const pairs = event.pairs;
             pairs.forEach((pair) => {
                 const { bodyA, bodyB } = pair;
-                if(bodyA.label === 'Wall' || bodyB.label === 'Wall') {
-                    const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
-                    
-                    if (otherBody.label === 'Projectile') return;
+                
+                const isProjectileA = bodyA.label === 'Projectile';
+                const isProjectileB = bodyB.label === 'Projectile';
 
+                // FIX: If a projectile hits anything, flag it for instant explosion
+                if (isProjectileA || isProjectileB) {
+                    const projectileBody = isProjectileA ? bodyA : bodyB;
+                    projectileBody.isExploding = true; 
+                    
+                    const otherBody = isProjectileA ? bodyB : bodyA;
+                    if (otherBody.label !== 'Wall') {
+                        // It hit a player directly
+                        const player = playersRef.current.find(p => p.id === otherBody.id);
+                        if (player) player.setState('alive', false);
+                    }
+                } else if (bodyA.label === 'Wall' || bodyB.label === 'Wall') {
+                    const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
                     Composite.remove(engine.world, otherBody);
                     playersRef.current.find(p => p.id === otherBody.id)?.setState('alive', false);
                 }
@@ -111,7 +142,6 @@ export default function GameEnv() {
         Events.on(engine, 'afterUpdate', () => {
             if (!bodiesRef.current) bodiesRef.current = {};
 
-            // --- 1. PLAYER & BRUSH PHYSICS SYNC ---
             playersRef.current.forEach((p) => {
                 if (p.getState('clearBrush')) {
                     const oldBodies = brushBodiesRef.current[p.id] || [];
@@ -133,7 +163,7 @@ export default function GameEnv() {
                         p.setState('clearOldBrush', false); 
                     }
                     const brushBall = Bodies.circle(pendingBrush.x, pendingBrush.y, 10, {
-                        isStatic: true, restitution: 1.5, friction: 0.005
+                        isStatic: true, restitution: 1.4, friction: 0.005
                     });
                     Composite.add(engine.world, brushBall);
                     if (!brushBodiesRef.current[p.id]) brushBodiesRef.current[p.id] = [];
@@ -146,7 +176,6 @@ export default function GameEnv() {
 
             const now = Date.now();
 
-            // --- 2. TURRET SHOOTING LOGIC ---
             if (now - lastShotTimeRef.current > 3000) { 
                 lastShotTimeRef.current = now;
                 
@@ -178,14 +207,18 @@ export default function GameEnv() {
                 }
             }
 
-            // --- 3. PROJECTILE EXPLOSION LOGIC ---
             const activeProjectiles = [];
-            const triggerRadius = 300;   
-            const blastRadius = 500;    
+            const triggerRadius = 80;   
+            const blastRadius = 250;    
             const blastForce = 0.15;    
             
             projectilesRef.current.forEach((proj) => {
                 let exploded = false;
+
+                // Explode if it hit an object (flagged in collisionStart)
+                if (proj.body.isExploding) {
+                    exploded = true;
+                }
 
                 Object.entries(bodiesRef.current).forEach(([pId, playerBody]) => {
                     if (exploded) return;
@@ -197,32 +230,41 @@ export default function GameEnv() {
                     const dy = playerBody.position.y - proj.body.position.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
+                    // Explode if proximity is triggered
                     if (dist < triggerRadius) {
                         exploded = true;
-                        
-                        Object.entries(bodiesRef.current).forEach(([blastId, pb]) => {
-                            const bp = playersRef.current.find(player => player.id === blastId);
-                            if (!bp || bp.getState('alive') === false) return;
-
-                            const pDx = pb.position.x - proj.body.position.x;
-                            const pDy = pb.position.y - proj.body.position.y;
-                            const pDist = Math.sqrt(pDx * pDx + pDy * pDy);
-                            
-                            if (pDist < blastRadius) {
-                                const forceMagnitude = blastForce * (1 - (pDist / blastRadius));
-                                const pAngle = Math.atan2(pDy, pDx);
-                                
-                                Body.applyForce(pb, pb.position, {
-                                    x: Math.cos(pAngle) * forceMagnitude,
-                                    y: Math.sin(pAngle) * forceMagnitude
-                                });
-                            }
-                        });
                     }
                 });
 
                 if (exploded) {
+                    // Apply shockwave forces
+                    Object.entries(bodiesRef.current).forEach(([blastId, pb]) => {
+                        const bp = playersRef.current.find(player => player.id === blastId);
+                        if (!bp || bp.getState('alive') === false) return;
+
+                        const pDx = pb.position.x - proj.body.position.x;
+                        const pDy = pb.position.y - proj.body.position.y;
+                        const pDist = Math.sqrt(pDx * pDx + pDy * pDy);
+                        
+                        if (pDist < blastRadius) {
+                            const forceMagnitude = blastForce * (1 - (pDist / blastRadius));
+                            const pAngle = Math.atan2(pDy, pDx);
+                            
+                            Body.applyForce(pb, pb.position, {
+                                x: Math.cos(pAngle) * forceMagnitude,
+                                y: Math.sin(pAngle) * forceMagnitude
+                            });
+                        }
+                    });
+
+                    // Remove body and record visual explosion coordinates
                     Composite.remove(engine.world, proj.body); 
+                    explosionsRef.current.push({
+                        id: proj.id,
+                        x: proj.body.position.x,
+                        y: proj.body.position.y,
+                        timestamp: now
+                    });
                 } else {
                     activeProjectiles.push(proj); 
                 }
@@ -230,13 +272,19 @@ export default function GameEnv() {
             
             projectilesRef.current = activeProjectiles;
 
-            // --- 4. NETWORK SYNC FOR CLIENT RENDER ---
+            // Clean up visual explosions older than 400ms
+            explosionsRef.current = explosionsRef.current.filter(exp => now - exp.timestamp < 400);
+
             if (now - lastSyncTimeRef.current > 50) {
                 myPlayer().setState('activeProjectiles', activeProjectiles.map(p => ({
-                    id: p.id,
-                    x: p.body.position.x,
-                    y: p.body.position.y
+                    id: p.id, x: p.body.position.x, y: p.body.position.y
                 })));
+                
+                // Sync current visual explosions to all clients
+                myPlayer().setState('explosions', explosionsRef.current.map(e => ({
+                    id: e.id, x: e.x, y: e.y
+                })));
+
                 lastSyncTimeRef.current = now;
             }
         });
@@ -254,11 +302,11 @@ export default function GameEnv() {
             if (!bodiesRef.current[p.id]) {
                 const existingPos = p.getState('pos');
                 const startX = existingPos ? existingPos.x : 100 + (Math.random() * 1000);
-                const startY = existingPos ? existingPos.y : 100 
+                const startY = existingPos ? existingPos.y : 500 + (Math.random() * -500);
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.4,
+                    restitution: 1.5,
                     friction: 0.005
                 });
                 
@@ -298,6 +346,14 @@ export default function GameEnv() {
 
     return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+            {/* Inline CSS for the shockwave animation */}
+            <style>{`
+                @keyframes shockwave {
+                    0% { width: 0px; height: 0px; opacity: 1; border-width: 30px; }
+                    100% { width: 500px; height: 500px; opacity: 0; border-width: 2px; }
+                }
+            `}</style>
+
             <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '20px', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
             <div style={{ position: 'absolute', top: 0, right: 0, width: '20px', height: '98%', backgroundColor: 'red', boxShadow: '0 0 10px red, 0 0 20px red' }} />
@@ -313,8 +369,9 @@ export default function GameEnv() {
 
             {players.map((player) => (
                 <React.Fragment key={player.id}>
-                    {/* Render the projectiles assigned to this specific player (Host) */}
                     <ProjectilesRenderer player={player} />
+                    {/* Render the explosions synced by the Host */}
+                    <ExplosionsRenderer player={player} />
                     
                     {player.getState('alive') !== false ? (
                         <Player player={player} color={"#" + Math.floor(Math.random()*16777215).toString(16)}/>
