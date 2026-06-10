@@ -315,7 +315,7 @@ export default function GameEnv() {
     return (
 
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-            <Countdown count={3}/>
+            <Countdown count={5}/>
             <EndGameScreen/>
             {/* Inline CSS for the shockwave animation */}
             <style>{`

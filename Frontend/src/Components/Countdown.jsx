@@ -6,16 +6,12 @@ export default function Countdown({ count }){
     const players = usePlayersList()
 
     useEffect(() => {
-        const timer = async () => {
-            for (let i = count; i > 0; i-1) {
-                await setTimeout(() => {
-                    setTime(i)
-                }, 1000)
-            }
-        }
-        console.log('a')
-        timer()
-    }, [])
+        setTimeout(() => {
+            if (time > 1)
+                setTime(time-1)
+        }, 1000)
+        
+    }, [time])
 
     return(
         <>
