@@ -274,6 +274,7 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
+                    isStatic: true,
                     restitution: 1.5,
                     friction: 0.005
                 });
@@ -315,7 +316,7 @@ export default function GameEnv() {
     return (
 
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-            <Countdown count={5}/>
+            <Countdown count={5} engine={engineRef.current}/>
             <EndGameScreen/>
             {/* Inline CSS for the shockwave animation */}
             <style>{`
