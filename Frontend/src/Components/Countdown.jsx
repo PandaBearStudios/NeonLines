@@ -7,13 +7,13 @@ export default function Countdown({ count }){
 
     useEffect(() => {
         const timer = async () => {
-            for (let i = 0; i > 0; i--) {
+            for (let i = count; i > 0; i-1) {
                 await setTimeout(() => {
-                    setTime(time-1)
+                    setTime(i)
                 }, 1000)
             }
         }
-
+        console.log('a')
         timer()
     }, [])
 

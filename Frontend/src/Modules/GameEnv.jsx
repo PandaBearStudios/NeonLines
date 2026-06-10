@@ -5,8 +5,8 @@ import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState } from '
 
 import Player from '../Components/Player';
 import EndGameScreen from '../Components/EndGameScreen'
-
 import { ExplosionsRenderer, ProjectilesRenderer } from '../Components/explosiveBall';
+import Countdown from '../Components/Countdown';
 
 
 
@@ -315,6 +315,7 @@ export default function GameEnv() {
     return (
 
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+            <Countdown count={3}/>
             <EndGameScreen/>
             {/* Inline CSS for the shockwave animation */}
             <style>{`
