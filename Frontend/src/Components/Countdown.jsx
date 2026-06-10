@@ -12,10 +12,10 @@ export default function Countdown({ count, engine }){
                 if (time > 1)
                     setTime(time-1);
                 else {
-                    setTime('GO!');
                     players.forEach((p) => {
                         Composite.get(engine.world, p.id, 'body').isStatic = false;
                     })
+                    document.querySelector('.clock').remove()
                 }
             }, 1000)
         }
