@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Engine, Runner, Bodies, Composite, Events, Body } from 'matter-js'; 
-import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState } from 'playroomkit';
+import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState, getState } from 'playroomkit';
 
 import Player from '../Components/Player';
 import EndGameScreen from '../Components/EndGameScreen'
@@ -98,6 +98,7 @@ export default function GameEnv() {
                         if (player) player.setState('alive', false);
                     }
                 } else if (bodyA.label === 'Wall' || bodyB.label === 'Wall') {
+                    if (getState('clock') != 0) return
                     const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
                     document.querySelector('.endgame-screen').style.visibility = "visible"
                     myPlayer().leaveRoom()
@@ -274,7 +275,6 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    isStatic: true,
                     restitution: 1.5,
                     friction: 0.005
                 });

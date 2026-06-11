@@ -9,23 +9,16 @@ export default function Countdown({ count, engine }){
     useEffect(() => {
         if(isHost() && players.length > 1){
             setTimeout(() => {
-                if (time > 1)
+                if (time >= 1)
                     setTime(time-1);
-                else {
-                    players.forEach((p) => {
-                        Composite.get(engine.world, p.id, 'body').isStatic = false;
-                        console.log(Composite.get(engine.world, p.id, 'body').isStatic)
-                    })
-                    document.querySelector('.clock').remove()
-                }
+                
             }, 1000)
         }
-        
     }, [time, players])
 
     return(
         <>
-            <h1 style={{marginTop: '10%'}} className="clock">{time}</h1>
+            <h1 style={{marginTop: '10%'}} className="clock">{players.length == 1 || time < 1 ? '' : time}</h1>
         </>
     )
 }
