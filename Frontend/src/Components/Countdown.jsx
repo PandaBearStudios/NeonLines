@@ -7,20 +7,21 @@ export default function Countdown({ count, engine }){
     const players = usePlayersList();
 
     useEffect(() => {
-        if(isHost()){
+        if(isHost() && players.length > 1){
             setTimeout(() => {
                 if (time > 1)
                     setTime(time-1);
                 else {
                     players.forEach((p) => {
                         Composite.get(engine.world, p.id, 'body').isStatic = false;
+                        console.log(Composite.get(engine.world, p.id, 'body').isStatic)
                     })
                     document.querySelector('.clock').remove()
                 }
             }, 1000)
         }
         
-    }, [time])
+    }, [time, players])
 
     return(
         <>
