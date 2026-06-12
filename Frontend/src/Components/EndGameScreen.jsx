@@ -18,6 +18,7 @@ export default function EndGameScreen() {
     return(
         <div className="endgame-screen" >
             Game Over
+            <h3 className='endgame-text'>YOU LOST!!</h3>
             <div className="endgame-buttons">
                 <button onClick={handleNewMatch}>New Match</button>
                 <button onClick={handleQuit}>Quit</button>

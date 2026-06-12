@@ -100,10 +100,13 @@ export default function GameEnv() {
                 } else if (bodyA.label === 'Wall' || bodyB.label === 'Wall') {
                     if (getState('clock') != 0) return
                     const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
-                    document.querySelector('.endgame-screen').style.visibility = "visible"
+
                     myPlayer().leaveRoom()
                     Composite.remove(engine.world, otherBody);
                     playersRef.current.find(p => p.id === otherBody.id)?.setState('alive', false);
+
+                    document.querySelector('.endgame-screen').style.visibility = "visible"
+                    document.querySelector('.endgame-text').textContent = players.length == 0 ? 'YOU WON!!': players.length
                 }
             });
         });
