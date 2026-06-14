@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { myPlayer, startMatchmaking, insertCoin } from 'playroomkit';
+import { usePlayersList, myPlayer, startMatchmaking, insertCoin } from 'playroomkit';
 import  '../css/EndGameScreen.css';
 
 export default function EndGameScreen() {
+    const players = usePlayersList();
     const navigate = useNavigate();
+    
+
     const handleNewMatch = async () => {
         myPlayer().leaveRoom();
         startMatchmaking(); // Start matchmaking again to find a new game
