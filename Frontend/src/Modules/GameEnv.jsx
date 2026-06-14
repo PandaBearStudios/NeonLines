@@ -27,12 +27,14 @@ export default function GameEnv() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        
         if (isHost()) {
             players.forEach(p => {
                 p.setState('alive', true);
             });
         }
         playersRef.current = players;
+        
     }, [players]);
 
     useEffect(() => {
@@ -101,12 +103,12 @@ export default function GameEnv() {
                     if (getState('clock') != 0) return
                     const otherBody = bodyA.label === 'Wall' ? bodyB : bodyA;
 
-                    myPlayer().leaveRoom()
+                    
                     Composite.remove(engine.world, otherBody);
                     playersRef.current.find(p => p.id === otherBody.id)?.setState('alive', false);
 
                     document.querySelector('.endgame-screen').style.visibility = "visible"
-                    document.querySelector('.endgame-text').textContent = players.length == 0 ? 'YOU WON!!': players.length
+                    
                 }
             });
         });
