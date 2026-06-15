@@ -4,7 +4,7 @@ import { Engine, Runner, Bodies, Composite, Events, Body } from 'matter-js';
 import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState, getState } from 'playroomkit';
 
 import Player from '../Components/Player';
-import EndGameScreen from '../Components/EndGameScreen'
+import EndGameManager from '../Components/EndGameManager';
 import { ExplosionsRenderer, ProjectilesRenderer } from '../Components/explosiveBall';
 import Countdown from '../Components/Countdown';
 
@@ -107,7 +107,6 @@ export default function GameEnv() {
                     Composite.remove(engine.world, otherBody);
                     playersRef.current.find(p => p.id === otherBody.id)?.setState('alive', false);
 
-                    document.querySelector('.endgame-screen').style.visibility = "visible"
                     
                 }
             });
@@ -280,7 +279,7 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.5,
+                    restitution: 1.4,
                     friction: 0.005
                 });
                 
@@ -322,7 +321,8 @@ export default function GameEnv() {
 
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
             <Countdown count={5} engine={engineRef.current}/>
-            <EndGameScreen/>
+            
+            <EndGameManager />
             {/* Inline CSS for the shockwave animation */}
             <style>{`
                 @keyframes shockwave {
