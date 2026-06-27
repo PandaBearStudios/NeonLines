@@ -39,6 +39,18 @@ h1 {
   
 }
 
+p{
+  font-family: 'NeonFont', sans-serif;
+  font-size: 1rem;
+  
+  background: linear-gradient(45deg, var(--pink-glow), #aba8fc, red);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke: 2px transparent;
+  text-shadow: 0 0 5px var(--pink-glow), 0 0 10px #9895ff, 0 0 15px red;
+}
+
 section {
   display: flex;
   flex-direction: column;
