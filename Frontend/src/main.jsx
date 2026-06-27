@@ -6,6 +6,7 @@ import './index.css'
 import App from './App.jsx'
 import GameEnv from './Modules/GameEnv.jsx'
 import HowToPlay from './Modules/HowToPlay.jsx';
+import Settings from './Modules/Settings.jsx';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path:'/how-to-play',
     element: <HowToPlay/>
+  },
+  {
+    path:'/settings',
+    element: <Settings/>
   }
 ]);
 
