@@ -5,6 +5,7 @@ import { insertCoin } from "playroomkit"
 import './index.css'
 import App from './App.jsx'
 import GameEnv from './Modules/GameEnv.jsx'
+import HowToPlay from './Modules/HowToPlay.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/game",
     element: <GameEnv />,
+  },
+  {
+    path:'/how-to-play',
+    element: <HowToPlay/>
   }
 ]);
 

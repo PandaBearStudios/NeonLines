@@ -18,7 +18,8 @@ function App() {
 
   const handlePlay = async () => {
     let hash = ''
-    myPlayer().setState('name', document.querySelector('.nameInput').value || 'Player');
+    localStorage.setItem('name', document.querySelector('.nameInput').value)
+    //myPlayer.setState("name", localStorage.getItem('name'))
     await startMatchmaking(); // Start matchmaking to find a game
     hash = window.location.hash
     navigate('/game'+hash); // Navigate to the game environment
@@ -33,7 +34,7 @@ function App() {
         <h1>Neon Lines</h1>
         <input type="text" className='nameInput' placeholder="Enter your name" />
         <button onClick={handlePlay}>Play</button>
-        <button>How to Play</button>
+        <button onClick={() => navigate('/how-to-play')}>How to Play</button>
         <button>Settings</button>
       </section>
       </div>
