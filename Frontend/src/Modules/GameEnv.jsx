@@ -279,7 +279,7 @@ export default function GameEnv() {
 
                 const ball = Bodies.circle(startX, startY, 25, {
                     id: p.id,
-                    restitution: 1.4,
+                    restitution: 1.3,
                     friction: 0.005
                 });
                 
