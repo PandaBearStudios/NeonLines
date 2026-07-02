@@ -7,15 +7,18 @@ import App from './App.jsx'
 import GameEnv from './Modules/GameEnv.jsx'
 import HowToPlay from './Modules/HowToPlay.jsx';
 import Settings from './Modules/Settings.jsx';
+import ErrorHandler from './Components/ErrorHandler.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorHandler />,
   },
   {
     path: "/game",
     element: <GameEnv />,
+    errorElement: <ErrorHandler />,
   },
   {
     path:'/how-to-play',
@@ -32,8 +35,14 @@ insertCoin({
   skipLobby: true,
 }).then(() => {
   createRoot(document.getElementById('root')).render(
-    <RouterProvider router={router} />
-)
+    <StrictMode>
+      <ErrorHandler>
+        <RouterProvider router={router} />
+      </ErrorHandler>
+    </StrictMode>
+  )
+}).catch((error) => {
+  console.error('Failed to initialize Playroom:', error);
 })
 
 
