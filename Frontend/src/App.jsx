@@ -35,7 +35,7 @@ function App() {
         <input type="text" className='nameInput' placeholder="Enter your name" />
         <button onClick={handlePlay}>Play</button>
         <button onClick={() => navigate('/how-to-play')}>How to Play</button>
-        <button>Settings</button>
+        <button onClick={() => navigate('/settings')}>Settings</button>
       </section>
       </div>
     </>

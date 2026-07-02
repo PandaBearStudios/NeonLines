@@ -2,17 +2,21 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Engine, Runner, Bodies, Composite, Events, Body } from 'matter-js'; 
 import { usePlayersList, isHost, transferHost, myPlayer, usePlayerState, getState } from 'playroomkit';
+import useSound from 'use-sound'
 
 import Player from '../Components/Player';
 import EndGameManager from '../Components/EndGameManager';
 import { ExplosionsRenderer, ProjectilesRenderer } from '../Components/explosiveBall';
 import Countdown from '../Components/Countdown';
 
+import bounce from '../assets/SFX/bounce.mp3'
 
 
 
 export default function GameEnv() {
     const players = usePlayersList();
+    const [play] = useSound(bounce)
+    const bounceSound = new Audio(bounce)
 
     const playersRef = useRef(players); 
     const engineRef = useRef(null);
@@ -88,6 +92,11 @@ export default function GameEnv() {
                 const isProjectileA = bodyA.label === 'Projectile';
                 const isProjectileB = bodyB.label === 'Projectile';
 
+                const isPlayer = bodyA.label === 'Player' || bodyB.label === 'Player' 
+                if (isPlayer){
+                    bounceSound.playbackRate = 3
+                    bounceSound.play()
+                }
                 // FIX: If a projectile hits anything, flag it for instant explosion
                 if (isProjectileA || isProjectileB) {
                     const projectileBody = isProjectileA ? bodyA : bodyB;
@@ -278,8 +287,9 @@ export default function GameEnv() {
                 const startY = existingPos ? existingPos.y : 100;
 
                 const ball = Bodies.circle(startX, startY, 25, {
+                    label: 'Player',
                     id: p.id,
-                    restitution: 1.4,
+                    restitution: 1.3,
                     friction: 0.005
                 });
                 
