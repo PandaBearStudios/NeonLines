@@ -22,11 +22,13 @@ const router = createBrowserRouter([
   },
   {
     path:'/how-to-play',
-    element: <HowToPlay/>
+    element: <HowToPlay/>,
+    errorElement: <ErrorHandler />,
   },
   {
     path:'/settings',
-    element: <Settings/>
+    element: <Settings/>,
+    errorElement: <ErrorHandler />,
   }
 ]);
 
@@ -35,11 +37,7 @@ insertCoin({
   skipLobby: true,
 }).then(() => {
   createRoot(document.getElementById('root')).render(
-    <StrictMode>
-      <ErrorHandler>
         <RouterProvider router={router} />
-      </ErrorHandler>
-    </StrictMode>
   )
 }).catch((error) => {
   console.error('Failed to initialize Playroom:', error);
