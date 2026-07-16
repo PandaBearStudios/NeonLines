@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { insertCoin } from "playroomkit"
 import './index.css'
 import App from './App.jsx'
+import ChoiceOfPlay from './Modules/ChoiceOfPlay.jsx';
 import GameEnv from './Modules/GameEnv.jsx'
 import HowToPlay from './Modules/HowToPlay.jsx';
 import Settings from './Modules/Settings.jsx';
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
     path:'/settings',
     element: <Settings/>,
     errorElement: <ErrorHandler />,
+  },
+  {
+    path: '/choice-of-play',
+    element: <ChoiceOfPlay/>
   }
 ]);
 
