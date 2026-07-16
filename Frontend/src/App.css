@@ -118,7 +118,7 @@ section::after {
 section>button{
   width: 50%;
   font-family: 'NeonFont', sans-serif;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight:1000;
   padding: 10px 20px;
   margin-top: 20px;

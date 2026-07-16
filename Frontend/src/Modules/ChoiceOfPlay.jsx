@@ -1,3 +1,4 @@
+
 export default function(){
     const handlePlay = async () => {
         let hash = ''
@@ -7,9 +8,9 @@ export default function(){
     }
 
     return (
-        <div className="choice-of-play">
+        <section className="choice-of-play">
             <button>Solo</button>
             <button onClick={handlePlay}>Multiplayer</button>
-        </div>
+        </section>
     );
 }
