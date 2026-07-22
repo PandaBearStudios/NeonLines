@@ -17,12 +17,8 @@ function App() {
   }, [])
 
   const handlePlay = async () => {
-    let hash = ''
     localStorage.setItem('name', document.querySelector('.nameInput').value)
-    //myPlayer.setState("name", localStorage.getItem('name'))
-    await startMatchmaking(); // Start matchmaking to find a game
-    hash = window.location.hash
-    navigate('/game'+hash); // Navigate to the game environment
+    navigate('/choice-of-play'); // Navigate to the game environment
   }
   
   return (
