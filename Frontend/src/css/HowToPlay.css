@@ -1,0 +1,202 @@
+.how-to-play {
+  --how-pink: #ff6ec4;
+  --how-blue: #7873f5;
+  --how-red: #ff5f6d;
+  width: min(860px, calc(100vw - 40px));
+  min-height: min(720px, calc(100vh - 40px));
+  box-sizing: border-box;
+  padding: 44px clamp(24px, 6vw, 72px) 38px;
+  position: relative;
+  overflow: hidden;
+  color: white;
+  background: linear-gradient(145deg, rgba(80, 29, 90, 0.96), rgba(27, 8, 35, 0.96));
+  border: 1px solid rgba(255, 110, 196, 0.65);
+  box-shadow: 0 0 18px rgba(255, 110, 196, 0.55), inset 0 0 30px rgba(120, 115, 245, 0.18);
+}
+
+.how-to-play::before {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  top: -220px;
+  right: -150px;
+  border: 1px solid rgba(255, 95, 109, 0.45);
+  border-radius: 50%;
+  box-shadow: 0 0 0 18px rgba(255, 95, 109, 0.05), 0 0 0 38px rgba(255, 95, 109, 0.04);
+  pointer-events: none;
+}
+
+.how-to-play__back,
+.how-to-play__start {
+  border: 0;
+  color: white;
+  font-family: 'NeonFont', sans-serif;
+  cursor: pointer;
+}
+
+.how-to-play__back {
+  position: relative;
+  padding: 0;
+  background: transparent;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px var(--how-pink);
+}
+
+.how-to-play__back span {
+  margin-right: 8px;
+  color: var(--how-pink);
+  font-size: 1.3rem;
+}
+
+.how-to-play__header {
+  max-width: 590px;
+  margin: 54px auto 42px;
+  text-align: center;
+}
+
+.how-to-play__eyebrow {
+  margin: 0 0 12px;
+  color: var(--how-pink);
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-shadow: 0 0 8px var(--how-pink);
+}
+
+.how-to-play h1 {
+  margin: 0;
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  line-height: 1;
+}
+
+.how-to-play__intro,
+.how-to-play__rule p,
+.how-to-play__warning {
+  font-family: 'NeonFont', sans-serif;
+  line-height: 1.6;
+}
+
+.how-to-play__intro {
+  margin: 20px auto 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1rem;
+}
+
+.how-to-play__rules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.how-to-play__rule {
+  min-height: 176px;
+  box-sizing: border-box;
+  padding: 20px 18px;
+  background: rgba(14, 4, 21, 0.38);
+  border-top: 2px solid var(--how-pink);
+  box-shadow: inset 0 10px 24px rgba(120, 115, 245, 0.08);
+}
+
+.how-to-play__number {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--how-red);
+  font-family: monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+}
+
+.how-to-play__rule h2 {
+  margin: 0 0 10px;
+  color: white;
+  font-family: 'NeonFont', sans-serif;
+  font-size: 1.35rem;
+  text-shadow: 0 0 8px var(--how-blue);
+}
+
+.how-to-play__rule p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.85rem;
+}
+
+.how-to-play__warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 28px 0 24px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.how-to-play__warning span {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--how-red);
+  border: 1px solid var(--how-red);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--how-red);
+}
+
+.how-to-play__start {
+  display: block;
+  margin: 0 auto;
+  padding: 13px 22px;
+  background: var(--how-pink);
+  font-size: 1rem;
+  box-shadow: 0 0 12px var(--how-pink);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.how-to-play__start:hover,
+.how-to-play__start:focus-visible {
+  box-shadow: 0 0 22px var(--how-pink), 0 0 40px rgba(255, 110, 196, 0.5);
+  transform: translateY(-2px);
+}
+
+.how-to-play__back:focus-visible,
+.how-to-play__start:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 5px;
+}
+
+@media (max-width: 680px) {
+  .how-to-play {
+    min-height: calc(100vh - 24px);
+    width: calc(100vw - 24px);
+    padding: 28px 18px 26px;
+  }
+
+  .how-to-play__header {
+    margin: 42px auto 30px;
+  }
+
+  .how-to-play__rules {
+    grid-template-columns: 1fr;
+  }
+
+  .how-to-play__rule {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .how-to-play__number {
+    display: inline-block;
+    margin: 0 12px 0 0;
+  }
+
+  .how-to-play__warning {
+    align-items: flex-start;
+  }
+}

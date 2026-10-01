@@ -2,9 +2,15 @@ import React, { useEffect } from 'react';
 import { usePlayerState, myPlayer } from 'playroomkit';
 import Player from './Player';
 
-export default function PlayerBall({ player, color }) {
+export default function PlayerBall({ player, color}) {
     // 1. Read the position calculated by the Host
     const [pos] = usePlayerState(player, 'pos');
+
+    useEffect(() => {
+        if (myPlayer()?.id === player.id) {
+            player.setState('name', localStorage.getItem('name'));
+        }
+    }, [player]);
 
     // 2. If the host hasn't calculated our position yet, render nothing
     if (!pos) return null;
@@ -13,8 +19,6 @@ export default function PlayerBall({ player, color }) {
         return(<div></div>)
 
 
-    
-    player.setState('name', localStorage.getItem('name'))
     // 3. Render exactly one ball using the Host's coordinates
     return (
         <div style={{

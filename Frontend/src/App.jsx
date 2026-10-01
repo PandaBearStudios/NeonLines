@@ -1,7 +1,4 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import BouncingBall from './Components/BouncingBall'
 import './App.css'
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +28,6 @@ function App() {
         <input type="text" className='nameInput' placeholder="Enter your name" />
         <button onClick={handlePlay}>Play</button>
         <button onClick={() => navigate('/how-to-play')}>How to Play</button>
-        <button onClick={() => navigate('/settings')}>Settings</button>
       </section>
       </div>
     </>

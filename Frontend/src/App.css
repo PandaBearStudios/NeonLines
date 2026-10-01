@@ -10,6 +10,7 @@ body {
   --gradient: white, rgb(255, 106, 106), rgb(57, 128, 57), rgb(93, 93, 255), var(--pink-glow), white;
   --conic-gradient: conic-gradient(var(--gradient));
 
+  margin: 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -134,4 +135,40 @@ section>button{
 
 section>button:hover {
   box-shadow: 0 0 20px var(--pink-glow), 0 0 40px var(--pink-glow);
+}
+
+.leave-game-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 10;
+  padding: 9px 16px;
+  border: 2px solid var(--pink-glow);
+  border-radius: 4px;
+  background: rgba(26, 4, 32, 0.72);
+  color: white;
+  font-family: 'NeonFont', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--pink-glow), inset 0 0 8px rgba(255, 110, 196, 0.35);
+  text-shadow: 0 0 6px white, 0 0 10px var(--pink-glow);
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.leave-game-button:hover {
+  background: var(--pink-glow);
+  box-shadow: 0 0 14px var(--pink-glow), 0 0 30px var(--pink-glow);
+  transform: translateY(-1px);
+}
+
+.leave-game-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+.leave-game-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 8px var(--pink-glow);
 }

@@ -1,4 +1,4 @@
-import { useMultiplayerState, isHost, usePlayersList } from "playroomkit";
+import { useMultiplayerState, isHost, usePlayersList, getState } from "playroomkit";
 import { Composite } from "matter-js";
 import { useEffect } from "react";
 
@@ -18,7 +18,7 @@ export default function Countdown({ count, engine }){
 
     return(
         <>
-            <h1 style={{marginTop: '10%'}} className="clock">{players.length == 1 || time < 1 ? 'Waiting for players...' : time}</h1>
+            <h1 style={{marginTop: '10%'}} className="clock">{players.length === 1 && getState('clock') !== 0 ? 'Waiting for players...' : getState('clock')}</h1>
         </>
     )
 }

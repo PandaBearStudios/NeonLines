@@ -1,84 +1,86 @@
-import { React, useRef, useEffect, useState } from 'react';
+import { React, useRef } from 'react';
 import { usePlayerState, myPlayer } from 'playroomkit';
 
-export default function Brush({ player, color }) {
-    const isDrawing = useRef(false);
-    const clearBrush = usePlayerState(player, 'clearBrush')[0];
-    
-    // Read the array of validated visual dots for this specific player
-    const [visualBrushes] = usePlayerState(player, 'visualBrushes');
-    const dots = visualBrushes || [];
+export default function Brush({ player, color, worldRef, WORLD_W, WORLD_H, scale }) {
+    const lastSaberSentAt = useRef(0);
+    const [saber] = usePlayerState(player, 'saber');
 
     // FIX: Safely check if this player object belongs to the local user
     const isMe = myPlayer()?.id === player.id;
 
-    const handleMouseDown = () => {
-        if (!isMe || !myPlayer().getState('alive')) return; // Ignore clicks if this isn't our player
-        player.setState('clearBrush', true); // Ensure clearBrush is false when we start drawing
-        myPlayer().setState('ink', 50); // Reset ink to 50 on mouse down
-        isDrawing.current = true;
-        player.setState('visualBrushes', []); 
-    };
-
-    const handleMouseUp = () => {
+    const sendSaberPosition = (e) => {
         if (!isMe || !myPlayer().getState('alive')) return;
-        isDrawing.current = false;
-        
+        const now = Date.now();
+        if (now - lastSaberSentAt.current < 1000 / 48) return;
+
+        lastSaberSentAt.current = now;
+        const currentSaber = player.getState('saber');
+        const rect = worldRef.current.getBoundingClientRect()
+        const WorldX = (e.clientX - rect.left) * (WORLD_W / rect.width);
+        const WorldY = (e.clientY - rect.top) * (WORLD_H / rect.height);
+
+        const angle = currentSaber?.angle ?? Math.atan2(
+            WorldY - WORLD_H / 2,
+            WorldX - WORLD_W / 2
+        );
+
+        player.setState('saber', {
+            x: WorldX,
+            y: WorldY,
+            angle: e.ctrlKey ? angle + (e.movementX / 2) * 0.02 : angle,
+            active: true
+        });
     };
 
     const handleMouseMove = (e) => {
-        if (!isMe || !isDrawing.current || !myPlayer().getState('alive')) return;
-        if (myPlayer().getState('ink') > 0) {
-            myPlayer().setState('ink', myPlayer().getState('ink') - 1);
-
-            player.setState('spawnBrush', {
-                x: e.clientX,
-                y: e.clientY,
-                id: `${player.id}-${Date.now()}-${Math.random()}`
-            });
-        }
+        sendSaberPosition(e);
     };
 
-    if (!myPlayer().getState('alive')) return null;
+    if (!myPlayer()?.getState('alive')) return null;
 
 
     return (
         <div
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
             style={{ 
-                width: '100vw', 
-                height: '100vh', 
+                width: `${WORLD_W}px`, 
+                height: `${WORLD_H}px`, 
                 position: 'absolute', 
                 top: 0, 
                 left: 0, 
                 zIndex: 1,
-                // CRITICAL: Let clicks pass through other players' layers
                 pointerEvents: isMe ? 'auto' : 'none' 
             }}
         >
-            {/* Render neon dots for this player */}
-            {
-            myPlayer().getState('clearBrush') ? null :
-            dots.map((dot) => (
+            {saber?.active && (
                 <div
-                    key={dot.id}
-                    className="brush-dot"
+                    className="lightsaber"
                     style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
-                        width: '20px',
-                        height: '20px',
-                        backgroundColor: color || '#b3ff00',
-                        filter: 'drop-shadow(0 0 5px ' + color + ')',
-                        borderRadius: '50%',
+                        width: '140px',
+                        height: '14px',
+                        background: `linear-gradient(90deg, #f3f3f3 0 12%, ${color || '#b3ff00'} 12% 100%)`,
+                        boxShadow: `0 0 6px #fff, 0 0 14px ${color || '#b3ff00'}, 0 0 28px ${color || '#b3ff00'}`,
+                        borderRadius: '999px',
                         pointerEvents: 'none',
-                        transform: `translate(${dot.x}px, ${dot.y}px) translate(-50%, -50%)`
+                        zIndex: 6,
+                        transform: `translate(${saber.x}px, ${saber.y}px) translate(-50%, -50%) rotate(${saber.angle}rad)`
                     }}
-                />
-            ))}
+                >
+                    <div style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: '3px',
+                        width: '12px',
+                        height: '8px',
+                        borderRadius: '0 999px 999px 0',
+                        backgroundColor: '#fff',
+                        boxShadow: '0 0 5px #fff'
+                    }} />
+                </div>
+            )}
         </div>
     );
 }

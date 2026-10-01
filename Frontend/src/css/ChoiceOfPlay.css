@@ -1,0 +1,26 @@
+.matchmaking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: matchmaking-spin 0.8s linear infinite;
+}
+
+section > button:disabled {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+@keyframes matchmaking-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
